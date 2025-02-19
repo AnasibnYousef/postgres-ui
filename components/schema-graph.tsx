@@ -96,8 +96,8 @@ const CustomNode = ({ data }: CustomNodeProps) => {
                         variant="outline"
                         size="icon"
                         className="h-10 w-10 shrink-0 overflow-hidden transition-colors hover:text-primary"
-                        onClick={(e) => {
-                            e.stopPropagation();
+                        onClick={(event) => {
+                            event.stopPropagation();
                             router.push(`/tables/${data.label}`);
                         }}
                     >
@@ -155,8 +155,12 @@ export default function SchemaGraph({ tables, tableColumns, foreignKeys }: Schem
         [foreignKeys]
     );
 
-    const [nodes, , onNodesChange] = useNodesState(getDagreLayout(initialNodes, initialEdges));
+    const dagreNodes = useMemo(() => getDagreLayout(initialNodes, initialEdges), [initialNodes, initialEdges]);
+
+    const [nodes, , onNodesChange] = useNodesState(dagreNodes);
     const [edges, , onEdgesChange] = useEdgesState(initialEdges);
+
+    const nodeTypes = useMemo(() => ({ customNode: CustomNode }), []);
 
     return (
         <ReactFlowProvider>
@@ -167,7 +171,7 @@ export default function SchemaGraph({ tables, tableColumns, foreignKeys }: Schem
                     onNodesChange={onNodesChange}
                     onEdgesChange={onEdgesChange}
                     fitView
-                    nodeTypes={{ customNode: CustomNode }}
+                    nodeTypes={nodeTypes}
                 >
                     <Controls />
                     <MiniMap />

@@ -1,9 +1,9 @@
-import pool from '@/lib/db';
-import SchemaGraph from '@/components/schema-graph';
-import { buttonVariants } from '@/components/ui/button';
-import { ChevronLeft } from 'lucide-react';
-import Link from 'next/link';
-import { cn } from '@/lib/utils';
+import pool from "@/lib/db";
+import SchemaGraph from "@/components/schema-graph";
+import { buttonVariants } from "@/components/ui/button";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 async function getSchemaData() {
     try {
@@ -22,7 +22,10 @@ async function getSchemaData() {
         const { rows: columns } = await pool.query(columnsQuery);
 
         // Group columns by table
-        const tableColumns: Record<string, { column_name: string; data_type: string }[]> = {};
+        const tableColumns: Record<
+            string,
+            { column_name: string; data_type: string }[]
+        > = {};
         columns.forEach((col) => {
             if (!tableColumns[col.table_name]) {
                 tableColumns[col.table_name] = [];
@@ -48,7 +51,7 @@ async function getSchemaData() {
 
         return { tableNames, tableColumns, foreignKeys };
     } catch (error) {
-        console.error('Error fetching schema data:', error);
+        console.error("Error fetching schema data:", error);
         return { tableNames: [], tableColumns: {}, foreignKeys: [] };
     }
 }
@@ -58,8 +61,26 @@ export default async function SchemaPage() {
 
     return (
         <main className="p-6">
-            <div className='flex items-center mb-4 gap-4'><Link className={cn(buttonVariants({ variant: "outline", size: "icon" }), 'rounded-full')} href={"/"} replace><ChevronLeft /></Link><h1 className="text-2xl font-semibold">Database Schema Visualization</h1></div>
-            <SchemaGraph tables={tableNames} tableColumns={tableColumns} foreignKeys={foreignKeys} />
+            <div className="flex items-center mb-4 gap-4">
+                <Link
+                    className={cn(
+                        buttonVariants({ variant: "outline", size: "icon" }),
+                        "rounded-full"
+                    )}
+                    href={"/"}
+                    replace
+                >
+                    <ChevronLeft />
+                </Link>
+                <h1 className="text-2xl font-semibold">
+                    Database Schema Visualization
+                </h1>
+            </div>
+            <SchemaGraph
+                tables={tableNames}
+                tableColumns={tableColumns}
+                foreignKeys={foreignKeys}
+            />
         </main>
     );
 }
